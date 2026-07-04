@@ -1,0 +1,99 @@
+# ==================================================
+# DEPENDENCIAS
+# ==================================================
+node_modules/
+**/node_modules/
+
+# ==================================================
+# VARIABLES DE ENTORNO Y CREDENCIALES
+# ==================================================
+.env
+.env.*
+**/.env
+**/.env.*
+
+# Permitir archivos de ejemplo
+!.env.example
+!**/.env.example
+
+# Certificados y claves privadas
+*.pem
+*.key
+*.p12
+*.pfx
+
+# ==================================================
+# ANGULAR - FRONTEND
+# ==================================================
+.angular/
+**/.angular/
+
+dist/
+**/dist/
+
+out-tsc/
+**/out-tsc/
+
+coverage/
+**/coverage/
+
+tmp/
+**/tmp/
+
+bazel-out/
+**/bazel-out/
+
+*.tsbuildinfo
+
+# ==================================================
+# NODE.JS - BACKEND
+# ==================================================
+logs/
+**/logs/
+
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Archivos de ejecución
+*.pid
+*.pid.lock
+pids/
+
+# ==================================================
+# ARCHIVOS SUBIDOS O GENERADOS
+# Descomenta si tu backend crea estas carpetas
+# ==================================================
+# backend/uploads/
+# backend/temp/
+
+# ==================================================
+# EDITORES
+# ==================================================
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+.history/
+*.sublime-workspace
+*.sublime-project
+
+# ==================================================
+# SISTEMA OPERATIVO
+# ==================================================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ==================================================
+# ARCHIVOS TEMPORALES
+# ==================================================
+*.tmp
+*.temp
+*.swp
+*.swo

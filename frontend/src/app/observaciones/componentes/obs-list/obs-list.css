@@ -1,0 +1,38 @@
+/* Estilo “lista amable” */
+
+.table tbody tr {
+    transition: box-shadow .12s ease, background-color .12s ease;
+}
+
+.table tbody tr:hover {
+    /* NO mover la fila */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, .06);
+    background-color: rgba(13, 110, 253, 0.03);
+    /* suave */
+}
+
+.table tbody td {
+    padding-top: .9rem;
+    padding-bottom: .9rem;
+}
+
+.dropdown-menu {
+    z-index: 2000;
+}
+
+
+/* Texto (columna texto) más legible */
+
+.table tbody td:nth-child(4) {
+    color: #4b5563;
+    /* gris suave */
+    font-weight: 500;
+}
+
+
+/* Fecha (más sutil) */
+
+.table tbody td:first-child {
+    color: #6b7280;
+    font-size: .85rem;
+}

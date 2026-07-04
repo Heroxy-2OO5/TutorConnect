@@ -1,0 +1,62 @@
+/* Paleta suave, acorde al dashboard */
+
+:root {
+    --tc-hero-tint: rgba(13, 110, 253, .35);
+    /* azul Bootstrap con transparencia */
+}
+
+
+/* Fondo con imagen + overlay para contraste */
+
+.about-hero {
+    min-height: 420px;
+    background: url('/Las-Tic-en-Educacion.png') center/cover no-repeat fixed;
+}
+
+.about-hero .overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, .65), rgba(0, 0, 0, .45));
+}
+
+
+/* Panel translúcido (vidrio) para el texto */
+
+.about-panel {
+    background: rgba(0, 0, 0, .45);
+    border-radius: 16px;
+    padding: 1.25rem 1.5rem;
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .25);
+    backdrop-filter: blur(2px);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, .55);
+}
+
+
+/* Degradado del título */
+
+.text-highlight {
+    background: linear-gradient(90deg, #6ea8fe, #b197fc);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+
+/* Botón outline claro sobre fondo oscuro */
+
+.btn-outline-light {
+    border-color: rgba(255, 255, 255, .7);
+    color: #fff;
+}
+
+.btn-outline-light:hover {
+    background: rgba(255, 255, 255, .15);
+    color: #fff;
+}
+
+
+/* Tarjetas */
+
+.card-title {
+    font-weight: 700;
+}

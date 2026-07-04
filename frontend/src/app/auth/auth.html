@@ -1,0 +1,153 @@
+<div class="min-vh-100 d-flex align-items-center justify-content-center bg-soft">
+    <div class="card shadow-lg border-0 rounded-4 w-100 auth-card">
+        <div class="row g-0">
+            <!-- Izquierda -->
+            <div class="col-md-5 auth-left text-white rounded-start-4 d-flex flex-column justify-content-center p-4">
+                <div class="text-center">
+                    <h2 class="fw-bold mb-2 animate__animated animate__fadeInDown">TutorConnect</h2>
+                    <p class="opacity-75 mb-3 animate__animated animate__fadeInUp">
+                        Plataforma de tutorías universitarias. Conecta tutores y estudiantes.
+                    </p>
+
+                    <!-- Reemplaza por tu asset si ya tienes -->
+                    <img class="img-fluid mt-2 rounded-3 shadow-sm animate__animated animate__zoomIn" src="assets/login-banner.png" alt="TutorConnect banner" onerror="this.src='https://dummyimage.com/480x260/0d6efd/ffffff&text=TutorConnect';" />
+
+                    <div class="mt-3 small opacity-75">
+                        Acceso exclusivo con correo institucional <b>@utmachala.edu.ec</b>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Derecha -->
+            <div class="col-md-7 p-4 p-md-5">
+                <!-- Tabs pro -->
+                <div class="tabs-pill mb-4">
+                    <button type="button" class="tab-btn" [class.active]="tab === 'login'" (click)="switchTab('login')">
+            <i class="bi bi-box-arrow-in-right me-2"></i> Iniciar sesión
+          </button>
+
+                    <button type="button" class="tab-btn" [class.active]="tab === 'register'" (click)="switchTab('register')">
+            <i class="bi bi-person-plus me-2"></i> Registrarse
+          </button>
+                </div>
+
+                <!-- Mensajes -->
+                <div *ngIf="errorMsg" class="alert alert-danger py-2 animate__animated animate__shakeX">
+                    <i class="bi bi-exclamation-triangle me-2"></i>{{ errorMsg }}
+                </div>
+                <div *ngIf="successMsg" class="alert alert-success py-2 animate__animated animate__fadeIn">
+                    <i class="bi bi-check-circle me-2"></i>{{ successMsg }}
+                </div>
+
+                <!-- LOGIN -->
+                <form *ngIf="tab === 'login'" [formGroup]="loginForm" (ngSubmit)="submitLogin()" novalidate>
+                    <div class="mb-3">
+                        <label class="form-label">Correo institucional</label>
+
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                            <input type="email" class="form-control" formControlName="email" placeholder="usuario@utmachala.edu.ec" autocomplete="email" />
+                        </div>
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="form-label">Contraseña</label>
+
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+
+                            <input [type]="showLoginPass ? 'text' : 'password'" class="form-control" formControlName="password" placeholder="Tu contraseña" autocomplete="current-password" (keyup)="onCapsCheck($event)" />
+
+                            <button type="button" class="btn btn-outline-secondary" (click)="showLoginPass = !showLoginPass">
+                <i class="bi" [class.bi-eye]="!showLoginPass" [class.bi-eye-slash]="showLoginPass"></i>
+              </button>
+                        </div>
+
+                        <div *ngIf="capsOn" class="form-text text-warning mt-1">
+                            <i class="bi bi-keyboard me-1"></i> Caps Lock está activado.
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 btn-pro" [disabled]="isBusy">
+            <span *ngIf="isBusy" class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+            {{ isBusy ? 'Ingresando…' : 'Iniciar sesión' }}
+          </button>
+                </form>
+
+                <!-- REGISTRO -->
+                <form *ngIf="tab === 'register'" [formGroup]="registerForm" (ngSubmit)="submitRegister()" novalidate>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Nombres</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                <input type="text" class="form-control" formControlName="firstName" placeholder="Nombres" autocomplete="given-name">
+                            </div>
+                            <div *ngIf="rf('firstName').touched && rf('firstName').errors?.['hardRequired']" class="form-text text-danger">Por favor, dinos tus nombres.</div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Apellidos</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+                                <input type="text" class="form-control" formControlName="lastName" placeholder="Apellidos" autocomplete="family-name">
+                            </div>
+                            <div *ngIf="rf('lastName').touched && rf('lastName').errors?.['hardRequired']" class="form-text text-danger">Faltan tus apellidos.</div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Correo institucional</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                            <input type="email" class="form-control" formControlName="email" placeholder="usuario@utmachala.edu.ec" autocomplete="email">
+                        </div>
+                        <div *ngIf="rf('email').touched && rf('email').errors?.['required']" class="form-text text-danger">El correo es obligatorio.</div>
+                        <div *ngIf="rf('email').touched && rf('email').errors?.['utmachalaEmail']" class="form-text text-danger">Usa tu correo que termine en @utmachala.edu.ec.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Rol</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-shield-lock"></i></span>
+                            <select class="form-select" formControlName="role">
+                <option *ngFor="let r of roles" [value]="r.value">{{ r.label }}</option>
+              </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Contraseña</label>
+
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+
+                            <input [type]="showRegisterPass ? 'text' : 'password'" class="form-control" formControlName="password" placeholder="Mínimo 8 caracteres, mayús, minús, número y símbolo" autocomplete="new-password" (keyup)="onCapsCheck($event)" />
+
+                            <button type="button" class="btn btn-outline-secondary" (click)="showRegisterPass = !showRegisterPass">
+                <i class="bi" [class.bi-eye]="!showRegisterPass" [class.bi-eye-slash]="showRegisterPass"></i>
+              </button>
+                        </div>
+
+                        <div *ngIf="rf('password').touched && rf('password').errors?.['required']" class="form-text text-danger">
+                            La contraseña es obligatoria.
+                        </div>
+                        <div *ngIf="rf('password').touched && rf('password').errors?.['strongPassword']" class="form-text text-danger">
+                            Debe tener 8+ caracteres con mayúscula, minúscula, número y caracter especial.
+                        </div>
+
+                        <div *ngIf="capsOn" class="form-text text-warning mt-1">
+                            <i class="bi bi-keyboard me-1"></i> Caps Lock está activado.
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100 btn-pro" [disabled]="isBusy">
+            <span *ngIf="isBusy" class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+            {{ isBusy ? 'Registrando…' : 'Registrarse' }}
+          </button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>

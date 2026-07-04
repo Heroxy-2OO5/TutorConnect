@@ -1,0 +1,71 @@
+.bg-hero {
+    background: linear-gradient(180deg, #f6f9ff 0%, #eef3ff 100%);
+}
+
+.card-img-top {
+    height: 220px;
+    /* Alto uniforme */
+    width: 100%;
+    object-fit: cover;
+    /* Recorta sin deformar */
+    border-radius: 12px;
+}
+
+.stat-card {
+    background: #ffffff;
+    transition: transform .2s, box-shadow .2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+}
+
+.card-img-container {
+    height: 220px;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.card-img-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+/* Hover card dashboard */
+
+.dash-card {
+    border-radius: 16px;
+    overflow: hidden;
+    /* para que la imagen respete bordes redondeados */
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.dash-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.10) !important;
+}
+
+
+/* Zoom suave solo en la imagen */
+
+.dash-card .card-img-top {
+    transition: transform .25s ease;
+}
+
+.dash-card:hover .card-img-top {
+    transform: scale(1.04);
+}
+
+
+/* Botón con efecto sutil */
+
+.dash-card .btn {
+    transition: transform .2s ease, background-color .2s ease, color .2s ease, border-color .2s ease;
+}
+
+.dash-card:hover .btn {
+    transform: translateY(-1px);
+}

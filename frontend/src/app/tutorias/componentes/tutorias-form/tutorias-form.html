@@ -1,0 +1,102 @@
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        <h5 class="card-title mb-3">{{ mode === 'crear' ? 'Añadir tutoría' : 'Editar tutoría' }}</h5>
+
+        <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Código materia</label>
+
+                    <!-- 👇 antes era <input>, ahora SELECT -->
+                    <select class="form-select" formControlName="codigoMateria">
+                        <option value="">-- Selecciona una materia --</option>
+                        <option *ngFor="let m of materias" [value]="m.codigo">
+                            {{ m.codigo }} — {{ m.nombre }}
+                        </option>
+                    </select>
+
+                    <div class="form-text text-danger" *ngIf="form.controls['codigoMateria'].touched
+                        && form.controls['codigoMateria'].errors?.['hardRequired']">
+                        El código de materia es obligatorio.
+                    </div>
+                </div>
+
+
+                <div class="col-md-4">
+                    <label class="form-label">Tutor</label>
+                    <select class="form-select" formControlName="tutorNombre">
+                        <option value="">-- Selecciona un tutor --</option>
+                        <option *ngFor="let t of tutores" [value]="t.firstName + ' ' + t.lastName">
+                            {{ t.firstName }} {{ t.lastName }} ({{ t.email }})
+                        </option>
+                    </select>
+
+                    <div class="form-text text-danger" *ngIf="form.controls['tutorNombre'].touched
+                        && form.controls['tutorNombre'].errors?.['hardRequired']">
+                        El nombre del tutor es obligatorio.
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Aula</label>
+                    <input type="text" class="form-control" formControlName="aula" placeholder="B-203 o Meet/Zoom">
+                    <div class="form-text text-danger" *ngIf="form.controls['aula'].touched && form.controls['aula'].errors?.['hardRequired']">
+                        El aula es obligatoria.
+                    </div>
+                </div>
+
+                <div class="col-md-8">
+                    <label class="form-label">Título</label>
+                    <input type="text" class="form-control" formControlName="titulo">
+                    <div class="form-text text-danger" *ngIf="form.controls['titulo'].touched && form.controls['titulo'].errors?.['hardRequired']">
+                        El título es obligatorio.
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Modalidad</label>
+                    <select class="form-select" formControlName="modalidad">
+            <option value="PRESENCIAL">Presencial</option>
+            <option value="VIRTUAL">Virtual</option>
+          </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Hora inicio</label>
+                    <input type="time" class="form-control" formControlName="horaInicio">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Hora fin</label>
+                    <input type="time" class="form-control" formControlName="horaFin">
+                    <div class="form-text text-danger" *ngIf="form.errors?.['oneHourBetween']">
+                        La tutoría debe durar exactamente 1 hora.
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <label class="form-label">Descripción</label>
+                    <textarea class="form-control" rows="2" formControlName="descripcion"></textarea>
+                    <div class="form-text text-danger" *ngIf="form.controls['descripcion'].touched && form.controls['descripcion'].errors?.['hardRequired']">
+                        La descripción es obligatoria.
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Cupo máximo</label>
+                    <input type="number" class="form-control" formControlName="cupoMaximo" min="0">
+                    <div class="form-text text-danger" *ngIf="form.controls['cupoMaximo'].touched && form.controls['cupoMaximo'].errors">
+                        Debe ser un número mayor o igual a 0.
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-3 d-flex gap-2">
+                <button type="submit" class="btn btn-success" [disabled]="!canEdit">
+          {{ mode === 'crear' ? 'Guardar' : 'Actualizar' }}
+        </button>
+                <button type="button" class="btn btn-secondary" (click)="cancel.emit()">Cancelar</button>
+            </div>
+        </form>
+    </div>
+</div>

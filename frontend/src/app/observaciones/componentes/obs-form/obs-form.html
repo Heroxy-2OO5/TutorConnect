@@ -1,0 +1,48 @@
+<div class="card border-0 shadow-sm animate__animated animate__fadeIn">
+    <div class="card-body">
+        <h5 class="card-title mb-3">{{ editData ? 'Editar observación' : 'Nueva observación' }}</h5>
+
+        <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+            <div class="mb-2">
+                <label class="form-label">Tipo</label>
+                <div class="d-flex flex-wrap gap-2">
+                    <label *ngFor="let t of tipos" class="btn btn-sm btn-outline-secondary" [class.active]="form.value.tipo === t">
+                        <input type="radio" class="btn-check" [value]="t" formControlName="tipo"> {{ t }}
+                    </label>
+                </div>
+            </div>
+
+            <div class="mb-2">
+                <label class="form-label">Texto</label>
+                <span class="small text-muted">
+    {{ (form.value.texto?.length || 0) }}/500
+  </span>
+                <textarea rows="4" class="form-control" formControlName="texto" placeholder="Describe brevemente la fortaleza, dificultad o acuerdo (10–500 caracteres)"></textarea>
+                <div class="form-text text-danger" *ngIf="form.controls['texto'].touched && form.controls['texto'].invalid">
+                    Debe tener entre 10 y 500 caracteres.
+                </div>
+            </div>
+
+            <div class="row g-2">
+                <div class="col-md-6">
+                    <label class="form-label">Calificación (opcional)</label>
+                    <select class="form-select" formControlName="calificacion">
+            <option [ngValue]="null">— Sin calificación —</option>
+            <option *ngFor="let n of [1,2,3,4,5]" [ngValue]="n">{{ n }}</option>
+          </select>
+                </div>
+                <div class="col-md-6 d-flex align-items-end">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="pendienteChk" formControlName="pendiente">
+                        <label class="form-check-label" for="pendienteChk">Marcar como pendiente</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-3 d-flex gap-2">
+                <button class="btn btn-primary" type="submit">{{ editData ? 'Guardar cambios' : 'Guardar' }}</button>
+                <button type="button" class="btn btn-outline-secondary" (click)="cancelar.emit()">Cancelar</button>
+            </div>
+        </form>
+    </div>
+</div>

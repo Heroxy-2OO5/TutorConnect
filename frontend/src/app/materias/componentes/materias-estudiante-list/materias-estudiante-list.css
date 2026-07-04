@@ -1,0 +1,62 @@
+.grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.card {
+    background: white;
+    padding: 1.3rem;
+    border-radius: 14px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+    transition: transform .2s;
+}
+
+.card:hover {
+    transform: scale(1.02);
+}
+
+.header {
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+}
+
+.icon {
+    font-size: 2rem;
+}
+
+.codigo {
+    font-size: 0.85rem;
+    color: #555;
+}
+
+.nombre {
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.semestre {
+    margin-top: .5rem;
+    font-size: .9rem;
+    color: #666;
+}
+
+.stars {
+    margin-left: .5rem;
+    color: gold;
+}
+
+.descripcion {
+    margin-top: .8rem;
+    font-size: .85rem;
+    color: #444;
+}
+
+.link {
+    border: none;
+    background: none;
+    color: #4777ff;
+    font-size: .8rem;
+    cursor: pointer;
+}

@@ -1,0 +1,38 @@
+.table thead th {
+    font-weight: 700;
+}
+
+.badge {
+    border-radius: 999px;
+    padding: .5rem .75rem;
+}
+
+
+/* Filas alternadas (zebra) */
+
+.materias-table tbody tr:nth-child(odd) {
+    background-color: #f9fafb;
+}
+
+.materias-table tbody tr:hover {
+    background-color: #eef2ff;
+}
+
+
+/* Icono de semestre */
+
+.semestre-icon {
+    font-size: 1.1rem;
+}
+
+
+/* Botón Ver más / Ver menos */
+
+.btn-link {
+    font-size: 0.75rem;
+    text-decoration: none;
+}
+
+.btn-link:hover {
+    text-decoration: underline;
+}

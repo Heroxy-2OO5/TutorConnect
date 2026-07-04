@@ -1,0 +1,78 @@
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+
+        <!-- (OPCIONAL) botón añadir aquí si quisieras mantenerlo
+    <div class="d-flex justify-content-end mb-2">
+      <button class="btn btn-sm btn-primary" (click)="add.emit()" [disabled]="!canEdit">
+        Añadir nueva
+      </button>
+    </div>
+    -->
+
+        <div class="table-responsive">
+            <table class="table align-middle materias-table">
+                <thead>
+                    <tr>
+                        <th style="width: 12rem;">Código</th>
+                        <th>Nombre</th>
+                        <th style="width: 11rem;">Semestre</th>
+                        <th>Descripción</th>
+                        <th style="width: 12rem;" class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let m of materias">
+                        <!-- código -->
+                        <td>
+                            <span class="badge bg-light text-dark border">{{ m.codigo }}</span>
+                        </td>
+
+                        <!-- nombre -->
+                        <td class="fw-semibold">{{ m.nombre }}</td>
+
+                        <!-- semestre con icono -->
+                        <td>
+                            <span class="semestre-icon me-1">{{ getSemestreIcon(m.semestre) }}</span> {{ m.semestre | semestreLabel }}
+                        </td>
+
+                        <!-- descripción con Ver más / Ver menos -->
+                        <td class="text-muted small">
+                            <ng-container *ngIf="!expanded.has(m.id); else fullDesc">
+                                {{ m.descripcion | shortText:140 }}
+                                <button type="button" class="btn btn-link btn-sm p-0 ms-1 align-baseline" (click)="toggleDescripcion(m)">
+                  Ver más
+                </button>
+                            </ng-container>
+
+                            <ng-template #fullDesc>
+                                {{ m.descripcion }}
+                                <button type="button" class="btn btn-link btn-sm p-0 ms-1 align-baseline" (click)="toggleDescripcion(m)">
+                  Ver menos
+                </button>
+                            </ng-template>
+                        </td>
+
+                        <!-- acciones con iconos -->
+                        <td class="text-end">
+                            <div class="btn-group btn-group-sm">
+                                <button type="button" class="btn btn-outline-primary" (click)="edit.emit(m)" [disabled]="!canEdit">
+                  <span class="me-1">✏️</span> Editar
+                </button>
+                                <button type="button" class="btn btn-outline-danger" (click)="remove.emit(m)" [disabled]="!canEdit">
+                  <span class="me-1">🗑️</span> Eliminar
+                </button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr *ngIf="!materias.length">
+                        <td colspan="5" class="text-center text-muted py-4">
+                            No hay materias registradas.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>

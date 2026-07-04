@@ -1,0 +1,145 @@
+<div class="card border-0 shadow-sm animate__animated animate__fadeInUp">
+    <div class="card-body">
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+            <h5 class="m-0">{{ titulo }}</h5>
+
+            <!-- BUSCADOR + FILTRO -->
+            <div class="d-flex align-items-center gap-3">
+
+                <!-- Buscador con lupa integrada -->
+                <div class="position-relative">
+                    <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-2 text-muted"></i>
+                    <input class="form-control form-control-sm ps-4" [(ngModel)]="filtro" name="filtro" placeholder="Buscar por texto o estudiante">
+                </div>
+
+                <!-- Checkbox alineado -->
+                <div class="form-check d-flex align-items-center m-0">
+                    <input class="form-check-input" type="checkbox" id="pendOnly" [(ngModel)]="pendientesOnly" name="pendOnly">
+                    <label for="pendOnly" class="form-check-label ms-1 small">
+        Solo pendientes
+      </label>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Chips de filtros -->
+        <div class="d-flex flex-wrap gap-2 mt-2" *ngIf="filtro || pendientesOnly">
+            <span class="badge rounded-pill bg-secondary-subtle text-secondary" *ngIf="pendientesOnly">
+        ⏳ Pendientes
+        <button type="button" class="btn btn-sm ms-1 p-0 border-0" (click)="pendientesOnly=false">✕</button>
+      </span>
+
+            <span class="badge rounded-pill bg-primary-subtle text-primary" *ngIf="filtro">
+        🔎 Busca: {{ filtro }}
+        <button type="button" class="btn btn-sm ms-1 p-0 border-0" (click)="filtro=''">✕</button>
+      </span>
+
+            <button class="btn btn-sm btn-outline-secondary" (click)="clearFilters()">
+        Limpiar
+      </button>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Estudiante</th>
+                        <th>Tipo</th>
+                        <th>Texto</th>
+                        <th class="text-center">Estado</th>
+                        <th style="width: 12rem;" class="text-end" *ngIf="puedeEditar">Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr *ngFor="let o of items; trackBy: trackById" [hidden]="!filtrar(o)">
+                        <td class="tc-date">{{ o.fecha | date:'yyyy-MM-dd HH:mm' }}</td>
+
+                        <td class="small">
+                            {{ o.estudianteId }}
+                        </td>
+
+                        <!-- Badge friendly tipo -->
+                        <td>
+                            <span class="badge" [class]="o.tipo | tipoObsBadge">
+                {{
+                  o.tipo === 'FORTALEZA' ? '💪 Fortaleza' :
+                  o.tipo === 'DIFICULTAD' ? '🧩 Dificultad' :
+                  o.tipo === 'ACUERDO' ? '🤝 Acuerdo' :
+                  '📌 Seguimiento'
+                }}
+              </span>
+                        </td>
+
+                        <!-- Texto + highlight -->
+                        <td class="tc-text">
+                            <span [innerHTML]="(o.texto | shortText:140) | highlight:filtro"></span>
+                        </td>
+
+                        <!-- Estado emocional -->
+                        <td class="text-center">
+                            <span class="badge" [ngClass]="o.pendiente ? 'tc-badge-warn' : 'tc-badge-ok'">
+                {{ o.pendiente ? '⏳ Pendiente' : '✅ Completada' }}
+              </span>
+                        </td>
+
+                        <!-- Acciones staff -->
+                        <td class="text-end" *ngIf="puedeEditar">
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                  Acciones
+                </button>
+
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li>
+                                        <button type="button" class="dropdown-item" (click)="editar.emit(o)">
+                      Editar
+                    </button>
+                                    </li>
+
+                                    <li>
+                                        <button type="button" class="dropdown-item text-info" (click)="togglePend.emit(o.id)">
+                      {{ o.pendiente ? 'Resolver' : 'Marcar como pendiente' }}
+                    </button>
+                                    </li>
+
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+
+                                    <li>
+                                        <button type="button" class="dropdown-item" (click)="verDetalle.emit(o)">
+                      Ver detalle
+                    </button>
+                                    </li>
+
+                                    <li>
+                                        <button type="button" class="dropdown-item text-danger" (click)="eliminar.emit(o.id)">
+                      Eliminar
+                    </button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Estado vacío más bonito -->
+                    <tr *ngIf="!items.length">
+                        <td [attr.colspan]="puedeEditar ? 6 : 5" class="text-center py-5">
+                            <div class="tc-empty mx-auto">
+                                <div class="tc-empty-icon">📝</div>
+                                <div class="fw-semibold">Aún no tienes observaciones</div>
+                                <div class="text-muted small">
+                                    Cuando tus tutores registren avances o pendientes, aparecerán aquí automáticamente.
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

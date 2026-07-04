@@ -1,0 +1,15 @@
+/* Paleta clara con acentos azul/violeta */
+
+:root {
+    --tc-grad-a: #eef3ff;
+    --tc-grad-b: #f7f9ff;
+}
+
+body {
+    background: linear-gradient(180deg, var(--tc-grad-a), var(--tc-grad-b));
+}
+
+.navbar .nav-link.active {
+    font-weight: 600;
+    color: #0d6efd !important;
+}

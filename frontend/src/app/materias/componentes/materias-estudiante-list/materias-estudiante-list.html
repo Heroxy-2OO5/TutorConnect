@@ -1,0 +1,32 @@
+<div class="grid">
+    <div class="card" *ngFor="let m of materias">
+
+        <div class="header">
+            <span class="icon">{{ getIcono(m.codigo) }}</span>
+            <div>
+                <div class="codigo">{{ m.codigo }}</div>
+                <div class="nombre">{{ m.nombre }}</div>
+            </div>
+        </div>
+
+        <div class="semestre">
+            Semestre {{ m.semestre }}
+            <span class="stars">
+        {{ '⭐'.repeat(m.semestre) }}
+      </span>
+        </div>
+
+        <div class="descripcion">
+            <ng-container *ngIf="expanded !== m.id">
+                {{ m.descripcion | slice:0:80 }}...
+                <button class="link" (click)="toggleExpand(m.id)">Ver más</button>
+            </ng-container>
+
+            <ng-container *ngIf="expanded === m.id">
+                {{ m.descripcion }}
+                <button class="link" (click)="toggleExpand(m.id)">Ver menos</button>
+            </ng-container>
+        </div>
+
+    </div>
+</div>

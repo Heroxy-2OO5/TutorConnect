@@ -1,0 +1,181 @@
+<div class="container py-5">
+
+    <!-- 🔹 VISTA TUTOR / ADMIN (tabla + CRUD) -->
+    <ng-container *ngIf="!esStudent; else vistaStudent">
+
+        <!-- HEADER CARD -->
+        <div class="tc-header-card shadow-sm mb-4 p-4 rounded-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div>
+                    <p class="text-uppercase text-muted small mb-1">Panel de gestión</p>
+                    <h2 class="fw-bold mb-1">Tutorías</h2>
+
+                    <div class="text-muted small" *ngIf="user() as u">
+                        Rol actual:
+                        <span class="badge bg-primary-light text-primary fw-semibold ms-1">
+              {{ u.role }}
+            </span>
+                    </div>
+                </div>
+
+                <div class="text-end">
+                    <p class="text-muted small mb-0 mt-2">
+                        Total: <strong>{{ tutorias().length }}</strong> tutorías registradas
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- LISTA -->
+        <tc-tutorias-list [tutorias]="tutorias()" [canEdit]="puedeEditar" (add)="onAdd()" (edit)="onEdit($event)" (remove)="onDelete($event)" class="animate__animated animate__fadeIn">
+        </tc-tutorias-list>
+
+        <!-- FORMULARIO -->
+        <div *ngIf="mostrandoForm" class="mt-4 animate__animated animate__fadeInUp">
+            <tc-tutoria-form [mode]="modo" [initial]="editTutoria" [canEdit]="puedeEditar" [materias]="materias()" [tutores]="tutores" (cancel)="onCancel()" (save)="onSave($event)">
+            </tc-tutoria-form>
+        </div>
+
+        <!-- FAB flotante -->
+        <button *ngIf="puedeEditar" class="tc-fab btn btn-primary rounded-circle shadow-lg" type="button" (click)="onAdd()">
+      <span class="tc-fab-icon">+</span>
+    </button>
+
+    </ng-container>
+
+    <!-- 🔹 VISTA ESTUDIANTE (cards tipo Coursera) -->
+    <ng-template #vistaStudent>
+        <div class="tc-student-wrapper">
+
+            <!-- Header estudiante -->
+            <div class="card border-0 shadow-sm mb-4 rounded-4 tc-st-header">
+                <div class="card-body d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+                    <div>
+                        <div class="tc-st-kicker">Panel de estudiante</div>
+                        <h3 class="fw-bold mb-1">Tutorías disponibles</h3>
+                        <div class="text-muted small" *ngIf="user() as u">
+                            Rol actual:
+                            <span class="badge bg-soft-role text-uppercase ms-1">{{ u.role }}</span>
+                        </div>
+                    </div>
+
+                    <div class="text-md-end">
+                        <div class="tc-counter-label text-muted small mb-1">
+                            Total de tutorías
+                        </div>
+                        <div class="tc-counter-display fw-bold">
+                            {{ totalTutorias }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filtros -->
+            <div class="card border-0 shadow-sm mb-4 rounded-4 tc-st-filters">
+                <div class="card-body">
+                    <div class="row g-3 align-items-center">
+
+                        <!-- Buscador -->
+                        <div class="col-md-4">
+                            <label class="form-label small text-muted mb-1">Buscar</label>
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text">🔍</span>
+                                <input type="text" class="form-control" placeholder="Por título, tutor o materia…" [value]="searchTerm" (input)="onSearch($any($event.target).value)">
+                            </div>
+                        </div>
+
+                        <!-- Filtro materia -->
+                        <div class="col-md-3">
+                            <label class="form-label small text-muted mb-1">Materia</label>
+                            <select class="form-select form-select-sm" [value]="filtroMateria" (change)="onChangeMateria($any($event.target).value)">
+                <option value="TODAS">Todas las materias</option>
+                <option *ngFor="let cod of materiasDisponibles" [value]="cod">
+                  {{ cod }}
+                </option>
+              </select>
+                        </div>
+
+                        <!-- Filtro modalidad -->
+                        <div class="col-md-3">
+                            <label class="form-label small text-muted mb-1">Modalidad</label>
+                            <select class="form-select form-select-sm" [value]="filtroModalidad" (change)="onChangeModalidad($any($event.target).value)">
+                <option value="TODAS">Todas</option>
+                <option value="PRESENCIAL">Presencial</option>
+                <option value="VIRTUAL">Virtual</option>
+              </select>
+                        </div>
+
+                        <!-- Botón limpiar -->
+                        <div class="col-md-2 text-md-end">
+                            <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill" (click)="limpiarFiltros()">
+                Limpiar filtros
+              </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cards -->
+            <div class="row g-4" *ngIf="tutoriasFiltradas.length; else noData">
+                <div class="col-md-6 col-lg-4" *ngFor="let t of tutoriasFiltradas">
+                    <div class="tc-st-card shadow-sm p-4 rounded-4 h-100 d-flex flex-column">
+
+                        <!-- top badges -->
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <span class="badge tc-badge-materia">
+                {{ t.codigoMateria }}
+              </span>
+
+                            <span class="badge tc-badge-modalidad" [class.tc-badge-presencial]="t.modalidad === 'PRESENCIAL'" [class.tc-badge-virtual]="t.modalidad === 'VIRTUAL'">
+                {{ t.modalidad | modalidadLabel }}
+              </span>
+                        </div>
+
+                        <h5 class="fw-bold mb-2 tc-title">{{ t.titulo }}</h5>
+
+                        <p class="text-muted small mb-1">
+                            👨‍🏫 <strong>{{ t.tutorNombre }}</strong>
+                        </p>
+
+                        <p class="text-muted small mb-1">
+                            ⏰ <strong>{{ t.horaInicio | timeRange:t.horaFin }}</strong>
+                        </p>
+
+                        <p class="text-muted small mb-3">
+                            🏫 <strong>{{ t.aula }}</strong>
+                        </p>
+
+                        <p class="text-muted small flex-grow-1 tc-description">
+                            {{ t.descripcion }}
+                        </p>
+
+                        <div class="d-flex justify-content-between align-items-center pt-3 border-top mt-3">
+                            <span class="badge rounded-pill px-3 py-2 tc-badge-cupos">
+                {{ t.cupoMaximo }} cupos
+              </span>
+                            <!-- sin botón de inscribirse, eso lo maneja otro módulo -->
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sin datos -->
+            <ng-template #noData>
+                <div class="text-center text-muted py-5">
+                    No hay tutorías disponibles con los filtros actuales.
+                </div>
+            </ng-template>
+
+            <!-- Botón "Ver más" -->
+            <div class="text-center mt-4" *ngIf="tutoriasFiltradas.length === itemsToShow && totalTutorias > itemsToShow">
+                <button type="button" class="btn btn-outline-primary rounded-pill px-4" (click)="verMas()">
+          Ver más tutorías
+        </button>
+            </div>
+
+        </div>
+    </ng-template>
+
+</div>

@@ -1,0 +1,59 @@
+/* Fondo suave (igual estilo que materias/tutorías) */
+
+:host {
+    display: block;
+    background: linear-gradient(120deg, #e8efff, #f1e9ff);
+    min-height: calc(100vh - 64px);
+    padding: 2rem 0;
+}
+
+.card {
+    background: #fff;
+}
+
+.filters-row .form-check-label {
+    cursor: pointer;
+}
+
+.progress {
+    background-color: rgba(0, 0, 0, 0.06);
+}
+
+
+/* Asegurar buen contraste en botones outline */
+
+.btn-outline-secondary {
+    color: #444;
+    border-color: #444;
+}
+
+.btn-outline-secondary:hover,
+.btn-outline-secondary:focus {
+    color: #fff;
+    background-color: #444;
+    border-color: #444;
+}
+
+.btn-outline-danger {
+    color: #c0392b;
+    border-color: #c0392b;
+}
+
+.btn-outline-danger:hover,
+.btn-outline-danger:focus {
+    color: #fff;
+    background-color: #c0392b;
+    border-color: #c0392b;
+}
+
+.btn-outline-primary {
+    color: #1b4f72;
+    border-color: #1b4f72;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus {
+    color: #fff;
+    background-color: #1b4f72;
+    border-color: #1b4f72;
+}

@@ -1,0 +1,257 @@
+<div class="container py-5">
+    <h3 class="fw-bold mb-1">Asistencias</h3>
+    <p class="text-muted small" *ngIf="user() as u">Tu rol: <strong>{{ u.role }}</strong></p>
+
+    <!-- ===== Estudiante: Mi historial ===== -->
+    <section *ngIf="esEstudiante" class="animate__animated animate__fadeIn">
+        <div class="row g-2 mb-3">
+            <div class="col-md-6">
+                <input class="form-control" [(ngModel)]="q" placeholder="Buscar por título o código de materia">
+            </div>
+            <div class="col-md-6 text-end">
+                <button class="btn btn-outline-primary btn-sm me-2" (click)="exportExcelEstudiante()">
+        Exportar Excel
+      </button>
+                <button class="btn btn-outline-secondary btn-sm" (click)="exportPdfEstudiante()">
+        Exportar PDF
+      </button>
+            </div>
+        </div>
+
+        <!-- 🔹 TARJETAS DE ESTADÍSTICAS -->
+        <div class="row g-3 mb-3" *ngIf="statsEstudiante as st">
+            <div class="col-md-3 col-6">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body py-2">
+                        <div class="small text-muted">Sesiones registradas</div>
+                        <div class="h5 mb-0">{{ st.total }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3 col-6">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body py-2">
+                        <div class="small text-muted">Asistencias</div>
+                        <div class="h5 mb-0">{{ st.asistio }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3 col-6">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body py-2">
+                        <div class="small text-muted">Tardanzas</div>
+                        <div class="h5 mb-0">{{ st.tardanza }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3 col-6">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body py-2">
+                        <div class="small text-muted">Ausencias</div>
+                        <div class="h5 mb-0">{{ st.ausente }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3 col-6">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body py-2">
+                        <div class="small text-muted">% de asistencia</div>
+                        <div class="h5 mb-0">{{ st.porcentajeAsistencia }}%</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3 col-6">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body py-2">
+                        <div class="small text-muted">Justificados</div>
+                        <div class="h5 mb-0">{{ st.justificado }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TABLA ACTUAL -->
+        <div class="table-responsive card border-0 shadow-sm">
+            <table class="table align-middle m-0">
+                <thead>
+                    <tr>
+                        <th>Materia / Título</th>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                        <th>Aula</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <ng-container *ngFor="let a of (asisSvc.historialDeEstudiante(user()?.email || '') | slice:0)">
+                        <ng-container *ngIf="getSesionById(a.sesionId) as s">
+                            <ng-container *ngIf="getTutoriaById(s.tutoriaId) as t">
+                                <tr *ngIf="(t.titulo + ' ' + t.codigoMateria).toLowerCase().includes(q.toLowerCase())">
+                                    <td>{{ t.codigoMateria }} · {{ t.titulo }}</td>
+                                    <td>{{ s.fecha | fechaBonita }}</td>
+                                    <td>{{ s.inicio }} – {{ s.fin }}</td>
+                                    <td>{{ s.aula }}</td>
+                                    <td>
+                                        <span class="badge" [class]="a.estado | estadoBadge">
+                                            {{ a.estado | estadoAsistencia }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </ng-container>
+                    </ng-container>
+
+                    <tr *ngIf="!(asisSvc.historialDeEstudiante(user()?.email || '').length)">
+                        <td colspan="5" class="text-center text-muted py-4">No tienes asistencias registradas.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ===== Tutor/Admin: Sesiones + Tomar asistencia ===== -->
+    <section *ngIf="esStaff" class="animate__animated animate__fadeIn">
+        <!-- Selección de tutoría -->
+        <div class="card border-0 shadow-sm mb-3">
+            <div class="card-body">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-6">
+                        <label class="form-label">Tutoría</label>
+                        <select class="form-select" [(ngModel)]="tutoriaId" (ngModelChange)="onTutoriaChange($event)">
+                            <option [ngValue]="null">— Elegir —</option>
+                            <option *ngFor="let t of tutorias()" [ngValue]="t.id">
+                                {{ t.codigoMateria }} · {{ t.titulo }} ({{ t.horaInicio | timeRange:t.horaFin }})
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 small text-muted" *ngIf="tutoriaActual() as t">
+                        Tutor: <strong>{{ t.tutorNombre }}</strong> · {{ t.modalidad | modalidadLabel }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lista de sesiones + crear una rápida -->
+        <div *ngIf="tutoriaActual() as t" class="row g-3">
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Sesiones</h5>
+                        <div *ngIf="feedback" class="alert alert-{{feedback.type}} alert-dismissible fade show py-2 small animate__animated animate__fadeInDown" role="alert">
+                            {{ feedback.text }}
+                            <button type="button" class="btn-close btn-close-sm" (click)="feedback = null"></button>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Hora</th>
+                                        <th>Aula</th>
+                                        <th class="text-end">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let s of sesionesDeTutoria()">
+                                        <td>{{ s.fecha | fechaBonita }}</td>
+                                        <td>{{ s.inicio }} – {{ s.fin }}</td>
+                                        <td>{{ s.aula }}</td>
+                                        <td class="text-end">
+                                            <div class="btn-group btn-group-sm">
+                                                <button class="btn btn-outline-success" (click)="tomarAsistencia(s)">
+                                                    Tomar asistencia
+                                                </button>
+                                                <button class="btn btn-outline-danger" (click)="eliminarSesion(s.id)">Eliminar</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="!sesionesDeTutoria().length">
+                                        <td colspan="4" class="text-center text-muted py-3">Aún no hay sesiones.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <hr>
+                        <h6 class="fw-bold mb-2">Nueva sesión rápida</h6>
+                        <div class="row g-2">
+                            <div class="col-4"><input type="date" class="form-control" #f></div>
+                            <div class="col-3"><input type="time" class="form-control" #hi value="08:00"></div>
+                            <div class="col-3"><input type="time" class="form-control" #hf value="09:00"></div>
+                            <div class="col-2"><input type="text" class="form-control" #au placeholder="Aula"></div>
+                        </div>
+                        <div class="mt-2">
+                            <button class="btn btn-primary btn-sm" (click)="(hi.value && hf.value && f.value && au.value) ? crearSesionSimple(f.value, hi.value, hf.value, au.value) : null">
+                                Crear
+                            </button>
+                            <span class="small text-muted ms-2">Duración sugerida: 1 hora.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tomar asistencia -->
+            <div class="col-lg-6" *ngIf="sesionActual() as s">
+                <div class="card border-0 shadow-sm animate__animated animate__fadeInUp">
+                    <div class="card-body">
+                        <h5 class="card-title">Tomar asistencia</h5>
+                        <p class="small text-muted mb-2">
+                            {{ t.codigoMateria }} · {{ t.titulo }} — {{ s.fecha | fechaBonita }} {{ s.inicio }}–{{ s.fin }} · {{ s.aula }}
+                        </p>
+                        <div class="mb-2 text-end">
+                            <button class="btn btn-outline-primary btn-sm me-2" (click)="exportExcelSesionActualTutor()">
+          Exportar Excel
+        </button>
+                            <button class="btn btn-outline-secondary btn-sm" (click)="exportPdfSesionActualTutor()">
+          Exportar PDF
+        </button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Estudiante</th>
+                                        <th class="text-center">Presente</th>
+                                        <th class="text-center">Tarde</th>
+                                        <th class="text-center">Ausente</th>
+                                        <th class="text-center">Justificado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let email of inscritosActivos()">
+                                        <td class="small">{{ email }}</td>
+                                        <td class="text-center">
+                                            <input type="radio" name="{{email}}" (change)="marcar(email,'ASISTIO')" [checked]="estadoDe(email)==='ASISTIO'">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="radio" name="{{email}}" (change)="marcar(email,'TARDANZA')" [checked]="estadoDe(email)==='TARDANZA'">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="radio" name="{{email}}" (change)="marcar(email,'AUSENTE')" [checked]="estadoDe(email)==='AUSENTE'">
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="radio" name="{{email}}" (change)="marcar(email,'JUSTIFICADO')" [checked]="estadoDe(email)==='JUSTIFICADO'">
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="!inscritosActivos().length">
+                                        <td colspan="5" class="text-center text-muted py-3">No hay inscritos activos en esta tutoría.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="alert alert-info small mt-2">
+                            Los cambios se guardan al seleccionar cada opción.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

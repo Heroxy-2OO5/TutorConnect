@@ -1,0 +1,55 @@
+<section class="bg-paleta tc-section">
+    <div class="container">
+
+        <!-- CABECERA + contador + filtros -->
+        <div class="d-flex flex-wrap justify-content-between align-items-end mb-3 gap-3">
+
+            <!-- título y rol -->
+            <div>
+                <h3 class="fw-bold mb-0">Materias</h3>
+                <div class="text-muted small" *ngIf="user() as u">
+                    Tu rol: <strong>{{ u.role }}</strong> · {{ totalMaterias }} materia{{ totalMaterias === 1 ? '' : 's' }} registradas
+                    <ng-container *ngIf="materiasFiltradas.length !== totalMaterias">
+                        · {{ materiasFiltradas.length }} visible{{ materiasFiltradas.length === 1 ? '' : 's' }} por filtros
+                    </ng-container>
+                </div>
+            </div>
+
+            <!-- buscador + filtro semestre -->
+            <div class="d-flex flex-wrap gap-2">
+                <div class="input-group input-group-sm" style="min-width: 220px;">
+                    <span class="input-group-text">🔍</span>
+                    <input type="text" class="form-control" placeholder="Buscar por código o nombre..." [(ngModel)]="busqueda">
+                </div>
+
+                <div class="input-group input-group-sm" style="min-width: 190px;">
+                    <span class="input-group-text">Semestre</span>
+                    <select class="form-select" [(ngModel)]="filtroSemestre">
+            <option [ngValue]="'todos'">Todos</option>
+            <option *ngFor="let s of semestres" [ngValue]="s">Semestre {{ s }}</option>
+          </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- LISTA -->
+        <ng-container *ngIf="user()?.role !== 'STUDENT'; else estudianteView">
+            <tc-materias-list [materias]="materiasFiltradas" [canEdit]="puedeEditar" (add)="onAdd()" (edit)="onEdit($event)" (remove)="onDelete($event)" class="animate__animated animate__fadeIn">
+            </tc-materias-list>
+        </ng-container>
+        <ng-template #estudianteView>
+            <tc-materias-estudiante-list [materias]="materiasFiltradas">
+            </tc-materias-estudiante-list>
+        </ng-template>
+        <!-- FORMULARIO -->
+        <div *ngIf="mostrandoForm" class="mt-4 animate__animated animate__fadeInUp">
+            <tc-materia-form [mode]="modo" [initial]="editMateria" [canEdit]="puedeEditar" (cancel)="onCancel()" (save)="onSave($event)">
+            </tc-materia-form>
+        </div>
+    </div>
+
+    <!-- FAB flotante para añadir -->
+    <button *ngIf="puedeEditar" type="button" class="btn btn-primary fab-add-materia" (click)="onAdd()">
+    +
+  </button>
+</section>

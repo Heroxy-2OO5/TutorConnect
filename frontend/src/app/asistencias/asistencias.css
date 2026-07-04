@@ -1,0 +1,10 @@
+:host {
+    display: block;
+    background: linear-gradient(120deg, #e8efff, #f1e9ff);
+    min-height: calc(100vh - 64px);
+    padding: 2rem 0;
+}
+
+.card {
+    background: #fff;
+}

@@ -1,0 +1,43 @@
+:host {
+    display: block;
+    background: linear-gradient(120deg, #e8efff, #f1e9ff);
+    min-height: calc(100vh - 64px);
+    padding: 2rem 0;
+}
+
+.card {
+    background: #fff;
+}
+
+.tc-hero {
+    background: linear-gradient(120deg, rgba(255, 255, 255, .9), rgba(255, 255, 255, .75));
+    border-radius: 1rem;
+}
+
+.tc-context {
+    border-radius: 1rem;
+}
+
+.tc-stat {
+    border-radius: 1rem;
+}
+
+.table thead th {
+    font-weight: 700;
+    color: #111;
+}
+
+.tc-empty {
+    max-width: 420px;
+}
+
+.tc-empty-icon {
+    font-size: 2rem;
+    margin-bottom: .5rem;
+    opacity: .9;
+}
+
+.tc-mark {
+    padding: 0 .2rem;
+    border-radius: .35rem;
+}
